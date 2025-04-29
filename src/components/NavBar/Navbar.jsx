@@ -1,9 +1,21 @@
 import React from "react";
-import { Link, useNavigate } from "react-router-dom"
+import { Link } from "react-router-dom"
+import "./navbar.css";
 
 const Navbar = () => {
   return (
-    <h1>Navbar</h1>
+    <nav className="navbar">
+      <div className="navbar-home">
+        <Link to="/home">Books & Movies App</Link>
+      </div>
+      <ul className="navbar-links">
+        <li><Link to="/books">Books</Link></li>
+        <li><Link to="/movies">Movies</Link></li>
+        <li><Link to="/game">Game</Link></li>
+        <li><Link to="/add">Add</Link></li>
+      </ul>
+
+    </nav>
   );
 }
 export default Navbar
