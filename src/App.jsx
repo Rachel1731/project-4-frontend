@@ -1,17 +1,14 @@
-// src/App.jsx
+import React, {useEffect, useState} from "react";
+import { BrowserRouter as Router, Routes, Route} from "react-router-dom";
+import Navbar from "./components/NavBar/Navbar.jsx";
 
 import './App.css';
-// Later on, we'll import button components here
 
 const App = () => {
   return (
-    <div className="App">
-      {
-        // Add all example components:
-        <Button1 buttonText="Example 1" />
-        //...
-      }
-    </div>
+    <Router>
+      <Navbar/>
+    </Router>
   );
 };
 
