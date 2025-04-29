@@ -4,6 +4,8 @@ import Navbar from "./components/NavBar/Navbar.jsx";
 import Home from "./components/Home/home.jsx";
 import Movies from "./components/Movies/movies.jsx";
 import Books from "./components/Books/books.jsx";
+import Add from "./components/Add/add.jsx";
+import Game from "./components/Game/game.jsx";
 
 import './App.css';
 
@@ -14,8 +16,10 @@ const App = () => {
       <Routes>
         <Route path="/" element={<Navigate to="/home" />} />
         <Route path="/home" element={<Home />} />
-        <Route path="/books" element={<Books />} />
         <Route path="/movies" element={<Movies />} />
+        <Route path="/books" element={<Books />} />
+        <Route path="/game" element={<Game />} />   
+        <Route path="/add" element={<Add />} />
       </Routes>
     </Router>
   );
