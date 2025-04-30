@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import 'bootstrap/dist/css/bootstrap.min.css';
-import './Movies.css';
+import './movies.css';
 
 const Movies = () => {
   const [movies, setMovies] = useState([]);
