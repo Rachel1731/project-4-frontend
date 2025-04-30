@@ -33,4 +33,29 @@
     border-radius: 8px;
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
   }
- 
+
+ .test img {
+display: block;
+margin-right: auto;
+ }
+
+ /* .Books img {
+    display: block;
+    margin-left: auto;
+    display:flex;
+    align-items: left;
+ } */
+
+ /* .Movies img {
+    display: block;
+    margin-left: auto;
+    display:flex;
+    align-items: left;
+ } */
+
+ .container {
+    display:flex;
+    justify-content: center;
+    margin-top: 20px;
+    gap: 40px;
+ }

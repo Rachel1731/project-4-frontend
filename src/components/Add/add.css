@@ -1,0 +1,36 @@
+body {
+    font-family: Arial, sans-serif;
+    line-height: 1.6;
+    background-color: #f9f9f9;
+    color: #333;
+    margin: 0;
+    padding: 2rem;
+  }
+  h1, h2 {
+    color: #2c3e50;
+  }
+  .section {
+    margin-bottom: 2rem;
+  }
+  .category {
+    margin-top: 1rem;
+  }
+  ul {
+    list-style-type: none;
+    padding-left: 0;
+  }
+  li {
+    margin-bottom: 0.8rem;
+    padding-left: 1rem;
+    position: relative;
+  }
+  li::before {
+    content: "•";
+    color: #2980b9;
+    position: absolute;
+    left: 0;
+  }
+  .note {
+    color: #555;
+    font-style: italic;
+  }
