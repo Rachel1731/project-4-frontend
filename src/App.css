@@ -1,10 +1,10 @@
-/* src/App.css */
-
-@import url('https://fonts.googleapis.com/css2?family=Roboto+Flex:opsz,wght@8..144,100..1000&display=swap');
 
 * {
   /* add custom fonts here */
   font-family: 'Roboto Flex', sans-serif;
+  margin: 0;
+  padding: 0;
+  
 }
 
 /* src/App.css */
@@ -13,19 +13,3 @@
   background-color: #242424;
 }
 
-.App {
-  display: flex;
-  flex-direction: column;
-  gap: 30px;
-  margin: 100px auto;
-  width: 300px;
-}
-
-.default-button {
-  background-color: white;
-  border-radius: 8px;
-  color: blue;
-  font-size: 24pt;
-  padding: 15px 50px;
-  width: 300px;
-}
