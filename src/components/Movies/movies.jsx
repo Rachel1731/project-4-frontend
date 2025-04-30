@@ -1,6 +1,6 @@
-import React, { useEffect, useState } from 'react';
-import 'bootstrap/dist/css/bootstrap.min.css';
-import './movies.css';
+import React, { useEffect, useState } from "react";
+import "bootstrap/dist/css/bootstrap.min.css";
+import "./movies.css";
 
 const Movies = () => {
   const [movies, setMovies] = useState([]);
@@ -8,8 +8,8 @@ const Movies = () => {
   useEffect(() => {
     const getMovies = async () => {
       try {
-        const response = await fetch('http://3.83.236.184:8000/api/movies/', {
-          method: 'GET',
+        const response = await fetch("http://3.83.236.184:8000/api/movies/", {
+          method: "GET",
         });
         const data = await response.json();
         setMovies(data);
@@ -31,7 +31,7 @@ const Movies = () => {
             <div key={movie.id} className="col">
               <div className="card h-100">
                 <img
-                  src={movie.image || 'https://via.placeholder.com/286x180'}
+                  src={movie.image || "https://via.placeholder.com/286x180"}
                   className="card-img-top"
                   alt={movie.title}
                 />
@@ -47,14 +47,20 @@ const Movies = () => {
                     <strong>Actors:</strong> {movie.actors}
                   </p>
                   <p className="card-text mb-3">
-                    <strong>Related Movie:</strong>{' '}
-                    {movie.movie ? movie.movie.title : 'None'}
+                    <strong>Related Movie:</strong>{" "}
+                    {movie.movie ? movie.movie.title : "None"}
                   </p>
                   <div className="mt-auto">
-                    <a href={`/movies/${movie.id}`} className="btn btn-primary me-2">
+                    <a
+                      href={`/movies/${movie.id}`}
+                      className="btn btn-primary me-2"
+                    >
                       View
                     </a>
-                    <a href={`/movies/edit/${movie.id}`} className="btn btn-secondary">
+                    <a
+                      href={`/movies/edit/${movie.id}`}
+                      className="btn btn-secondary"
+                    >
                       Edit
                     </a>
                   </div>
