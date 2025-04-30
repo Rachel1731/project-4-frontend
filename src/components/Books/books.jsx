@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react'
+import './books.css'
 
 const Books = () => {
   const [books, setBooks] = useState([]);
@@ -26,13 +27,16 @@ const Books = () => {
     }
     getData();
   }, []);
+
   const handleEdit = (book) => {
+    console.log('Editting book:', book.id)
     setEditingBook(book.id);
+    console.log('Editting book after set:', book.id)
     setEditForm({
       title: book.title, 
       date: book.date,
        category: book.category, 
-       movie: book.movie
+       movie: '',
     });
   };
   const handleFormChange = (event) => {
@@ -53,10 +57,18 @@ const Books = () => {
     const updatedBookData = await response.json();
     setBooks(books.map((book) => (book.id === id ? updatedBookData : book)))
     setEditingBook(null);
+  };
+
   const handleCancel = () => {
     setEditingBook(null);
+    setEditForm({
+      title: '',
+      date: '',
+      category: '',
+      movie: null
+    });
   }
-  }
+  
     return (
       <div className='books-container'>
         <h1>Books Page</h1>
@@ -89,17 +101,17 @@ const Books = () => {
                     name='title'
                     value={editForm.title}
                     onChange={handleFormChange}
-                    require
+                    required
                   />
                 </div>
                 <div>
                   <label>Publication Year:</label>
                   <input
-                    type='text'
+                    type='number'
                     name='date'
                     value={editForm.date}
                     onChange={handleFormChange}
-                    require
+                    required
                   />
                 </div>
                 <div>
@@ -109,14 +121,14 @@ const Books = () => {
                     name='category'
                     value={editForm.category}
                     onChange={handleFormChange}
-                    require
+                    required
                   />
                 </div>
                 <div>
                   <label>Related Movie:</label>
                   <select
                   name='movie'
-                  value={editForm.movie}
+                  value={editForm.movie || ''}
                   onChange={handleFormChange}
                   >
                   {movies.map((movie) => (
