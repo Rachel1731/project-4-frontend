@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import 'bootstrap/dist/css/bootstrap.min.css';
-
+import './movies.css'
 const Movies = () => {
   const [movies, setMovies] = useState([]);
 
@@ -41,6 +41,10 @@ const Movies = () => {
       return null;
     }
   };
+  const currencyFormatter = new Intl.NumberFormat('en-US', {
+    style: 'currency',
+    currency: 'USD',
+  });
 
   return (
     <div className="container my-4">
@@ -72,15 +76,12 @@ const Movies = () => {
                     <strong>Published:</strong> {movie.date}
                   </p>
                   <p className="card-text mb-1">
-                    <strong>Budget:</strong> {movie.budget}
+                  <strong>Budget:</strong> {currencyFormatter.format(movie.budget)}
                   </p>
                   <p className="card-text mb-1">
                     <strong>Actors:</strong> {movie.actors}
                   </p>
-                  <p className="card-text mb-3">
-                    <strong>Related Movie:</strong>{' '}
-                    {movie.movie ? movie.movie.title : 'None'}
-                  </p>
+                
                   <div className="mt-auto d-flex justify-content-between">
                     <button className="btn btn-outline-primary btn-sm">
                       View
