@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react'
+import './books.css'
 
 const Books = () => {
   const [books, setBooks] = useState([]);
@@ -28,7 +29,9 @@ const Books = () => {
   }, []);
 
   const handleEdit = (book) => {
+    console.log('Editting book:', book.id)
     setEditingBook(book.id);
+    console.log('Editting book after set:', book.id)
     setEditForm({
       title: book.title, 
       date: book.date,
@@ -98,7 +101,7 @@ const Books = () => {
                     name='title'
                     value={editForm.title}
                     onChange={handleFormChange}
-                    require
+                    required
                   />
                 </div>
                 <div>
@@ -108,7 +111,7 @@ const Books = () => {
                     name='date'
                     value={editForm.date}
                     onChange={handleFormChange}
-                    require
+                    required
                   />
                 </div>
                 <div>
@@ -118,7 +121,7 @@ const Books = () => {
                     name='category'
                     value={editForm.category}
                     onChange={handleFormChange}
-                    require
+                    required
                   />
                 </div>
                 <div>
