@@ -51,9 +51,10 @@ const Books = () => {
       body: JSON.stringify(updatedBook)
     });
     const updatedBookData = await response.json();
-    setBooks(books.map)
+    setBooks(books.map((book) => (book.id === id ? updatedBookData : book)))
+    setEditingBook(null);
   const handleCancel = () => {
-
+    setEditingBook(null);
   }
   }
     return (
