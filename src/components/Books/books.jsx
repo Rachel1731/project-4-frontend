@@ -26,13 +26,14 @@ const Books = () => {
     }
     getData();
   }, []);
+
   const handleEdit = (book) => {
     setEditingBook(book.id);
     setEditForm({
       title: book.title, 
       date: book.date,
        category: book.category, 
-       movie: book.movie
+       movie: '',
     });
   };
   const handleFormChange = (event) => {
@@ -53,10 +54,18 @@ const Books = () => {
     const updatedBookData = await response.json();
     setBooks(books.map((book) => (book.id === id ? updatedBookData : book)))
     setEditingBook(null);
+  };
+
   const handleCancel = () => {
     setEditingBook(null);
+    setEditForm({
+      title: '',
+      date: '',
+      category: '',
+      movie: null
+    });
   }
-  }
+  
     return (
       <div className='books-container'>
         <h1>Books Page</h1>
@@ -95,7 +104,7 @@ const Books = () => {
                 <div>
                   <label>Publication Year:</label>
                   <input
-                    type='text'
+                    type='number'
                     name='date'
                     value={editForm.date}
                     onChange={handleFormChange}
@@ -116,7 +125,7 @@ const Books = () => {
                   <label>Related Movie:</label>
                   <select
                   name='movie'
-                  value={editForm.movie}
+                  value={editForm.movie || ''}
                   onChange={handleFormChange}
                   >
                   {movies.map((movie) => (
