@@ -107,7 +107,6 @@ const Movies = () => {
   return (
     <>
       <div className="container my-4">
-        <h1 className="mb-4">Movies Page</h1>
         {movies.length === 0 ? (
           <p>No movies found</p>
         ) : (
