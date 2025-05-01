@@ -6,6 +6,7 @@ const Books = () => {
   const [books, setBooks] = useState([]);
   const [movies, setMovies] = useState([]);
   const [editingBook, setEditingBook] = useState(null);
+  const [bookCovers, setBookCovers] = useState(null)
   const [editForm, setEditForm] = useState({
     title: '',
     date: '',
