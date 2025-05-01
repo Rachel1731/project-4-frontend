@@ -34,3 +34,7 @@
   .navbar-links a:hover {
     color: #ddd;
   }
+  .navbar-links a.active {
+    color: #ffcc00; /* Highlight color (yellow) */
+    font-weight: bold; /* Make the text bold */
+  }
