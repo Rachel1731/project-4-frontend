@@ -137,9 +137,6 @@ const Movies = () => {
                       <strong>Actors:</strong> {movie.actors}
                     </p>
                     <div className="mt-auto d-flex justify-content-between">
-                      <button className="btn btn-outline-primary btn-sm">
-                        View
-                      </button>
                       <button
                         className="btn btn-outline-secondary btn-sm"
                         onClick={() => handleEdit(movie)}>
@@ -160,9 +157,6 @@ const Movies = () => {
             <div className="modal-content">
               <div className="modal-header">
                 <h5 className="modal-title">Edit Movie</h5>
-                <button type="button"className="close"onClick={handleCancel}aria-label="Close">
-                  <span aria-hidden="true">&times;</span>
-                </button>
               </div>
               <div className="modal-body">
                 <form>

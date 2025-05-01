@@ -3,4 +3,7 @@
   height: 180px;
   object-fit: cover;
 }
-
+.btn-delete {
+  background-color: red;
+  border: none;
+}
