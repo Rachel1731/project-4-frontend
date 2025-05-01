@@ -35,6 +35,9 @@
     color: #ddd;
   }
   .navbar-links a.active {
-    color: #ffcc00; /* Highlight color (yellow) */
-    font-weight: bold; /* Make the text bold */
+    color: #ffcc00; 
+  }
+  .navbar-home a.active {
+    color: #ffcc00;
+  
   }
