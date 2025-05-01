@@ -5,6 +5,23 @@ const Comments = () => {
   const [comments, setComments] = useState([]);
   const [content, setContent] = useState('');
   
+  // useEffect(() => {
+  //   axios.get(`/api/comments/?movie=${movieId}`)
+  //     .then(response => setComments(response.data))
+  //     .catch(error => console.error(error));
+  // }, [movieId]);
+
+  // const handleSubmit = (e) => {
+  //   e.preventDefault();
+  //   axios.post('/api/comments/', { movie: movieId, content })
+  //     .then(response => {
+  //       setComments([...comments, response.data]);
+  //       setContent('');
+  //     })
+  //     .catch(error => console.error(error));
+  // };
+
+
   const handleSubmit = (e) => {
     e.preventDefault();
   };
