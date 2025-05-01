@@ -126,8 +126,16 @@ const Books = () => {
       alert('Book Deleted')
     }
   }
+  const handleAdd = () => {
+    setEditingBook(true)
+  }
   return (
+    <>
+    <div className="add-button">
+        <button onClick={handleAdd}>Add Book!</button>
+    </div>
     <div className="container my-4">
+      
       {books.length === 0 ? (
         <p>No books found</p>
       ) : (
@@ -265,6 +273,7 @@ const Books = () => {
         </div>
       )}
     </div>
+    </>
   );
 };
 
