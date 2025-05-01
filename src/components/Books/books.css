@@ -7,3 +7,18 @@
   background-color: red;
   border: none;
 }
+.add-button {
+  display: flex;
+  justify-content: flex-start;
+  margin: 20px;
+}
+.add-button button {
+  border-radius:  5px;
+  padding: 5px;
+  background-color: #333;
+  color: #ffcc00;
+  border: none;
+}
+.add-button button:hover {
+  background-color: rgb(91, 89, 89);
+}
