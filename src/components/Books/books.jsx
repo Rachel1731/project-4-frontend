@@ -146,10 +146,10 @@ const Books = () => {
       {books.length === 0 ? (
         <p>No books found</p>
       ) : (
-        <div className="row row-cols-1 row-cols-sm-2 row-cols-md-3 g-4">
+        <div className="row row-cols-1 row-cols-sm-2 row-cols-md-3 row-cols-lg-4 row-cols-xl-5 g-4">
           {books.map((book) => (
-            <div key={book.id} className="col">
-              <div className="card h-100">
+            <div key={book.id} className="col d-flex justify-content-center">
+              <div className="card h-100" style={{maxWidth: '300px'}}>
               {bookCovers[book.id] ? (
                   <img
                     src={bookCovers[book.id]}
