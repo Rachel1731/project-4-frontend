@@ -5,6 +5,10 @@ const Comments = () => {
   const [comments, setComments] = useState([]);
   const [content, setContent] = useState('');
   
+  const handleSubmit = (e) => {
+    e.preventDefault();
+  };
+
   return (
     <div>
       <h3>Comments</h3>
