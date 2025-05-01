@@ -6,7 +6,7 @@ const Books = () => {
   const [books, setBooks] = useState([]);
   const [movies, setMovies] = useState([]);
   const [editingBook, setEditingBook] = useState(null);
-  const [bookCovers, setBookCovers] = useState(null)
+  const [bookCovers, setBookCovers] = useState({})
   const [editForm, setEditForm] = useState({
     title: '',
     date: '',
@@ -23,6 +23,19 @@ const Books = () => {
         const booksData = await booksResponse.json();
         setBooks(booksData);
 
+        //API fetches cover for each book
+        const coverPromises = booksData.map(async (book) => {
+          const coverUrl = await fetchCoverByTitle(book.title);
+          console.log(`Cover for ${book.title}:`, coverUrl);
+          return { id: book.id, coverUrl };
+        });
+        const coversArray = await Promise.all(coverPromises);
+        const covers = coversArray.reduce((acc, { id, coverUrl }) => {
+          acc[id] = coverUrl;
+          return acc;
+        }, {});
+        setBookCovers(covers);
+
         const moviesResponse = await fetch('http://3.83.236.184:8000/api/movies/', {
           method: 'GET',
         });
@@ -35,6 +48,23 @@ const Books = () => {
     getData();
   }, []);
 
+  const fetchCoverByTitle = async (title) => {
+    try {
+      const response = await fetch(
+        `https://www.googleapis.com/books/v1/volumes?q=intitle:${encodeURIComponent(title)}`
+      );
+      const data = await response.json();
+      if (data.items && data.items.length > 0) {
+        const book = data.items[0]; // Get the first matching book
+        const coverUrl = book.volumeInfo.imageLinks?.thumbnail;
+        return coverUrl || null;
+      }
+      return null;
+    } catch (error) {
+      console.error('Error fetching book cover:', error);
+      return null;
+    }
+  };
   const handleEdit = (book) => {
     setEditingBook(book.id);
     setEditForm({
@@ -88,7 +118,6 @@ const Books = () => {
 
   return (
     <div className="container my-4">
-      <h1 className="mb-4">Books Page</h1>
       {books.length === 0 ? (
         <p>No books found</p>
       ) : (
@@ -96,11 +125,21 @@ const Books = () => {
           {books.map((book) => (
             <div key={book.id} className="col">
               <div className="card h-100">
-                <img
-                  src={book.image || 'https://via.placeholder.com/286x180?text=Book+Cover'}
-                  className="card-img-top"
-                  alt={book.title}
-                />
+              {bookCovers[book.id] ? (
+                  <img
+                    src={bookCovers[book.id]}
+                    className="card-img-top"
+                    alt={book.title}
+                    style={{ height: '300px', objectFit: 'cover' }}
+                  />
+                ) : (
+                  <div
+                    className="card-img-top bg-light d-flex align-items-center justify-content-center"
+                    style={{ height: '300px', color: '#666', fontSize: '14px' }}
+                  >
+                    No Cover Available
+                  </div>
+                )}
                 <div className="card-body d-flex flex-column">
                   <h5 className="card-title">{book.title}</h5>
                   <p className="card-text mb-1">
@@ -221,3 +260,5 @@ const Books = () => {
 };
 
 export default Books;
+
+

@@ -34,3 +34,10 @@
   .navbar-links a:hover {
     color: #ddd;
   }
+  .navbar-links a.active {
+    color: #ffcc00; 
+  }
+  .navbar-home a.active {
+    color: #ffcc00;
+  
+  }
