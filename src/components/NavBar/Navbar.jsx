@@ -1,28 +1,28 @@
 import React from "react";
-import { Link } from "react-router-dom";
+import { NavLink } from "react-router-dom";
 import "./navbar.css";
 
 const Navbar = () => {
   return (
     <nav className="navbar">
       <div className="navbar-home">
-        <Link to="/home">Page & Picture</Link>
+        <NavLink to="/home">Page & Picture</NavLink>
       </div>
       <ul className="navbar-links">
         <li>
-          <Link to="/books">Books</Link>
+          <NavLink to="/books">Books</NavLink>
         </li>
         <li>
-          <Link to="/movies">Movies</Link>
+          <NavLink to="/movies">Movies</NavLink>
         </li>
         <li>
-          <Link to="/game">Game</Link>
+          <NavLink to="/game">Game</NavLink>
         </li>
         <li>
-          <Link to="/source-page">Source Page</Link>
+          <NavLink to="/source-page">Source Page</NavLink>
         </li>
         <li>
-          <Link to="/comments">Leave a Comment</Link>
+          <NavLink to="/comments">Leave a Comment</NavLink>
         </li>
       </ul>
     </nav>
