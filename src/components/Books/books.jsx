@@ -5,6 +5,8 @@ import './books.css'
 const Books = () => {
   const [books, setBooks] = useState([]);
   const [movies, setMovies] = useState([]);
+  const [formMode, setFormMode] = useState('add');
+  const [showModal, setShowModal] = useState(false);
   const [editingBook, setEditingBook] = useState(null);
   const [bookCovers, setBookCovers] = useState({})
   const [editForm, setEditForm] = useState({
@@ -66,6 +68,7 @@ const Books = () => {
     }
   };
   const handleEdit = (book) => {
+    setFormMode('edit');
     setEditingBook(book.id);
     setEditForm({
       title: book.title,
@@ -92,17 +95,36 @@ const Books = () => {
     };
 
     try {
-      const response = await fetch(`http://3.83.236.184:8000/api/books/${id}/`, {
-        method: 'PUT',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(updatedBook),
-      });
+      let response;
+      if (formMode === 'add') {
+        response = await fetch('http://3.83.236.184:8000/api/books/', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(updatedBook),
+        });
+      } else {
+        response = await fetch(`http://3.83.236.184:8000/api/books/${id}`, {
+          method: 'PUT',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(updatedBook),
+        });
+      }
 
       if (response.ok) {
         const updatedBookData = await response.json();
-        setBooks((prevBooks) =>
+        const coverURL = await fetchCoverByTitle(updatedBookData.title);
+        if (formMode === 'add') {
+          setBooks((prevBooks) => [...prevBooks, updatedBookData]);
+          setBookCovers((prevCovers) => ({
+            ...prevCovers,
+            [updatedBookData.id]: coverURL,
+          }));
+        } else {
+          setBooks((prevBooks) =>
           prevBooks.map((book) => (book.id === id ? updatedBookData : book))
         );
+        }
+        
         setEditingBook(null);
       } else {
         console.error('Failed to update the book.');
@@ -123,17 +145,18 @@ const Books = () => {
 
   };
 
-  const handleDelete = async (id) => {
-    const response = await fetch(`http://3.83.236.184:8000/api/books/${id}`, {
+  const handleDelete = async () => {
+    const response = await fetch(`http://3.83.236.184:8000/api/books/${editingBook}`, {
       method: 'Delete',
     });
     if (response.ok) {
-      setBooks((prevBooks) => prevBooks.filter((book) => book.id !== id))
+      setBooks((prevBooks) => prevBooks.filter((book) => book.id !== editingBook))
       setEditingBook(null);
       alert('Book Deleted')
     }
   }
   const handleAdd = () => {
+    setFormMode('add');
     setEditingBook(true)
   }
   return (
@@ -146,10 +169,10 @@ const Books = () => {
       {books.length === 0 ? (
         <p>No books found</p>
       ) : (
-        <div className="row row-cols-1 row-cols-sm-2 row-cols-md-3 g-4">
+        <div className="row row-cols-1 row-cols-sm-2 row-cols-md-3 row-cols-lg-4 row-cols-xl-5 g-4">
           {books.map((book) => (
-            <div key={book.id} className="col">
-              <div className="card h-100">
+            <div key={book.id} className="col d-flex justify-content-center">
+              <div className="card h-100" style={{maxWidth: '300px'}}>
               {bookCovers[book.id] ? (
                   <img
                     src={bookCovers[book.id]}
@@ -197,7 +220,9 @@ const Books = () => {
           <div className="modal-dialog" role="document">
             <div className="modal-content">
               <div className="modal-header">
-                <h5 className="modal-title">Edit Book</h5>
+                <h5 className="modal-title">
+                {formMode === 'add' ? 'Add Book' : 'Edit Book'}
+                </h5>
               </div>
               <div className="modal-body">
                 <form>
@@ -253,26 +278,38 @@ const Books = () => {
                 </form>
               </div>
               <div className="modal-footer">
-                <button
-                  type="button"
-                  className="btn btn-primary"
-                  onClick={() => handleSave(editingBook)}
-                >
-                  Save
-                </button>
+              {formMode === 'add' ? (
+                  <button
+                    type="button"
+                    className="btn btn-primary"
+                    onClick={handleSave}
+                  >
+                    Add
+                  </button>
+                ) : (
+                  <>
+                    <button
+                      type="button"
+                      className="btn btn-primary"
+                      onClick={handleSave}
+                    >
+                      Save
+                    </button>
+                    <button
+                      type="button"
+                      className="btn btn-danger"
+                      onClick={handleDelete}
+                    >
+                      Delete
+                    </button>
+                  </>
+                )}
                 <button
                   type="button"
                   className="btn btn-secondary"
                   onClick={handleCancel}
                 >
                   Cancel
-                </button>
-                <button
-                type='button'
-                className='btn btn-secondary btn-delete'
-                onClick={() => handleDelete(editingBook)}
-                >
-                  Delete
                 </button>
               </div>
             </div>
