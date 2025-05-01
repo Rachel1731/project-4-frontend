@@ -1,6 +1,6 @@
-import "./add.css";
+import "./comments.css";
 
-const Add = () => {
+const Comments = () => {
   return (
     <div className="appContainer">
       <h1>Books and Movies Source Page</h1>
@@ -126,4 +126,4 @@ const Add = () => {
   );
 };
 
-export default Add;
+export default Comments;
