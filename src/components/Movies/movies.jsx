@@ -87,7 +87,7 @@ const Movies = () => {
   };
 
   const handleSave = async () => {
-    const movieData = {
+    const updatedMovie = {
       title: editForm.title,
       date: editForm.date,
       budget: editForm.budget,
@@ -100,13 +100,13 @@ const Movies = () => {
         response = await fetch('http://3.83.236.184:8000/api/movies/', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify(movieData),
+          body: JSON.stringify(updatedMovie),
         });
       } else {
         response = await fetch(`http://3.83.236.184:8000/api/movies/${editingMovieId}`, {
           method: 'PUT',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify(movieData),
+          body: JSON.stringify(updatedMovie),
         });
       }
 
