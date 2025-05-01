@@ -44,7 +44,7 @@ const Add = () => {
           <strong>OMDB</strong>
         </li>
         <li>
-          <strong> Connor Input </strong>
+          <strong>https://developers.google.com/books</strong>
         </li>
       </div>
 
