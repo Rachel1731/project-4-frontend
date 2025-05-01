@@ -114,6 +114,13 @@ const Books = () => {
 
   const handleCancel = () => {
     setEditingBook(null);
+    setEditForm({
+      title: '',
+    date: '',
+    category: '',
+    movie: null,
+    })
+
   };
 
   const handleDelete = async (id) => {
