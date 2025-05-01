@@ -116,6 +116,16 @@ const Books = () => {
     setEditingBook(null);
   };
 
+  const handleDelete = async (id) => {
+    const response = await fetch(`http://3.83.236.184:8000/api/books/${id}`, {
+      method: 'Delete',
+    });
+    if (response.ok) {
+      setBooks((prevBooks) => prevBooks.filter((book) => book.id !== id))
+      setEditingBook(null);
+      alert('Book Deleted')
+    }
+  }
   return (
     <div className="container my-4">
       {books.length === 0 ? (
@@ -173,14 +183,6 @@ const Books = () => {
             <div className="modal-content">
               <div className="modal-header">
                 <h5 className="modal-title">Edit Book</h5>
-                <button
-                  type="button"
-                  className="close"
-                  onClick={handleCancel}
-                  aria-label="Close"
-                >
-                  <span aria-hidden="true">&times;</span>
-                </button>
               </div>
               <div className="modal-body">
                 <form>
@@ -249,6 +251,13 @@ const Books = () => {
                   onClick={handleCancel}
                 >
                   Cancel
+                </button>
+                <button
+                type='button'
+                className='btn btn-secondary btn-delete'
+                onClick={() => handleDelete(editingBook)}
+                >
+                  Delete
                 </button>
               </div>
             </div>
