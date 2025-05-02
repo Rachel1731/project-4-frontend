@@ -48,6 +48,7 @@ const Books = () => {
       }
     };
     getData();
+    
   }, []);
 
   const fetchCoverByTitle = async (title) => {
@@ -86,14 +87,14 @@ const Books = () => {
     }));
   };
 
-  const handleSave = async (id) => {
+  const handleSave = async () => {
     const updatedBook = {
       title: editForm.title,
       date: editForm.date,
       category: editForm.category,
       movie: editForm.movie || null,
     };
-
+    console.log(editingBook)
     try {
       let response;
       if (formMode === 'add') {
@@ -103,7 +104,7 @@ const Books = () => {
           body: JSON.stringify(updatedBook),
         });
       } else {
-        response = await fetch(`http://3.83.236.184:8000/api/books/${id}`, {
+        response = await fetch(`http://3.83.236.184:8000/api/books/${editingBook}`, {
           method: 'PUT',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify(updatedBook),
@@ -121,8 +122,11 @@ const Books = () => {
           }));
         } else {
           setBooks((prevBooks) =>
-          prevBooks.map((book) => (book.id === id ? updatedBookData : book))
+          prevBooks.map((book) => (book.id === editingBook ? updatedBookData : book))
         );
+        setBookCovers((prevCovers) => ({
+          ...prevCovers, [editingBook]: coverURL,
+        }))
         }
         
         setEditingBook(null);
@@ -147,7 +151,7 @@ const Books = () => {
 
   const handleDelete = async () => {
     const response = await fetch(`http://3.83.236.184:8000/api/books/${editingBook}`, {
-      method: 'Delete',
+      method: 'DELETE',
     });
     if (response.ok) {
       setBooks((prevBooks) => prevBooks.filter((book) => book.id !== editingBook))
