@@ -28,7 +28,7 @@ const Books = () => {
         //API fetches cover for each book
         const coverPromises = booksData.map(async (book) => {
           const coverUrl = await fetchCoverByTitle(book.title);
-          console.log(`Cover for ${book.title}:`, coverUrl);
+          // console.log(`Cover for ${book.title}:`, coverUrl);
           return { id: book.id, coverUrl };
         });
         const coversArray = await Promise.all(coverPromises);
@@ -90,11 +90,11 @@ const Books = () => {
   const handleSave = async () => {
     const updatedBook = {
       title: editForm.title,
-      date: editForm.date,
+      date: parseInt(editForm.date),
       category: editForm.category,
-      movie: editForm.movie || null,
+      movie_id: editForm.movie ? parseInt(editForm.movie) : null,
     };
-    console.log(editingBook)
+    console.log('Sending to API:', updatedBook); // seeing what i am sending to the API
     try {
       let response;
       if (formMode === 'add') {
@@ -104,7 +104,7 @@ const Books = () => {
           body: JSON.stringify(updatedBook),
         });
       } else {
-        response = await fetch(`http://3.83.236.184:8000/api/books/${editingBook}`, {
+        response = await fetch(`http://3.83.236.184:8000/api/books/${editingBook}/`, {
           method: 'PUT',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify(updatedBook),
@@ -113,6 +113,9 @@ const Books = () => {
 
       if (response.ok) {
         const updatedBookData = await response.json();
+        console.log('API Response:', updatedBookData); // seeing how data is coming back from API
+        console.log('Available movies:', movies); //movies array to see whats available
+
         const coverURL = await fetchCoverByTitle(updatedBookData.title);
         if (formMode === 'add') {
           setBooks((prevBooks) => [...prevBooks, updatedBookData]);
@@ -127,7 +130,7 @@ const Books = () => {
         setBookCovers((prevCovers) => ({
           ...prevCovers, [editingBook]: coverURL,
         }))
-        console.log(updatedBook)
+        console.log(updatedBook.movie)
         }
         
         setEditingBook(null);
