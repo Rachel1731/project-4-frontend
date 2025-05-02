@@ -127,6 +127,7 @@ const Books = () => {
         setBookCovers((prevCovers) => ({
           ...prevCovers, [editingBook]: coverURL,
         }))
+        console.log(updatedBook)
         }
         
         setEditingBook(null);
@@ -161,7 +162,7 @@ const Books = () => {
   }
   const handleAdd = () => {
     setFormMode('add');
-    setEditingBook(null);
+    setEditingBook(true);
     setEditForm({
     title: '',
     date: '',
@@ -207,7 +208,7 @@ const Books = () => {
                     <strong>Category:</strong> {book.category}
                   </p>
                   <p className="card-text mb-3">
-                    <strong>Related Movie:</strong>{' '}
+                    <strong>Related Movie:</strong>
                     {book.movie ? book.movie.title : 'None'}
                   </p>
                   <div className="mt-auto d-flex justify-content-between">
