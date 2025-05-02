@@ -10,7 +10,6 @@ import Home from "./components/Home/home.jsx";
 import Movies from "./components/Movies/movies.jsx";
 import Books from "./components/Books/books.jsx";
 import Add from "./components/Add/source.jsx";
-import Game from "./components/Game/game.jsx";
 import Comments from "./components/comments/comments.jsx";
 
 import "./App.css";
@@ -24,7 +23,6 @@ const App = () => {
         <Route path="/home" element={<Home />} />
         <Route path="/movies" element={<Movies />} />
         <Route path="/books" element={<Books />} />
-        <Route path="/game" element={<Game />} />
         <Route path="/source-page" element={<Add />} />
         <Route path="/comments" element={<Comments />} />
       </Routes>
