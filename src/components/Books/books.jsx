@@ -161,7 +161,13 @@ const Books = () => {
   }
   const handleAdd = () => {
     setFormMode('add');
-    setEditingBook(true)
+    setEditingBook(null);
+    setEditForm({
+    title: '',
+    date: '',
+    category: '',
+    movie: null,
+    })
   }
   return (
     <>
