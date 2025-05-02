@@ -11,14 +11,21 @@ const Game = () => {
         });
         const booksData = await response.json();
         setBooks(booksData);
-
+        const ratings = {}
         for (const book of booksData) {
           const ratingResponse = await fetch(`https://www.googleapis.com/books/v1/volumes?q=intitle:${encodeURIComponent(book.title)}`);
-          const ratingsData = await ratingResponse.json()
-          console.log(ratingsData)
+          const ratingData = await ratingResponse.json()
+          console.log(ratingData)
+          if(ratingData.items.length > 0) {
+            const rating = ratingData.items[0].volumeInfo.averageRating || null;
+            ratings[book.id] = rating;
+          } else {
+            ratings[book.id] = null;
+          }
         }
-      } catch {
-
+        setBookRatings(ratings);
+      } catch(error) {
+        console.log('Error Fetching books or ratings:', error)
       }
     }
     fetchBooks();

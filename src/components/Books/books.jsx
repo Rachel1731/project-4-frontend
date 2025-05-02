@@ -151,7 +151,7 @@ const Books = () => {
 
   const handleDelete = async () => {
     const response = await fetch(`http://3.83.236.184:8000/api/books/${editingBook}`, {
-      method: 'Delete',
+      method: 'DELETE',
     });
     if (response.ok) {
       setBooks((prevBooks) => prevBooks.filter((book) => book.id !== editingBook))
