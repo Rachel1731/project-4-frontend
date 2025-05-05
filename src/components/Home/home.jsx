@@ -12,18 +12,14 @@ const Home = () => {
       </p> 
       </div>
      <div className="container">
-     <div className="test">
-
-<img  alt="Movies" src="images/image (1).png" />
-</div>
-  
-
-<div className="Books">
-<img  alt="Books" src="images/image.png" />
-</div >
+        <div className="movie">
+          <img  alt="Movies" src="images/image (1).png" />
+        </div>
+        <div className="book">
+          <img  alt="Books" src="images/image.png" />
+        </div >
      </div>
-      
-          </div>
+    </div>
         
   );
 };

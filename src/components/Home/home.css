@@ -16,27 +16,21 @@
     color: #555;
   }
 
-  .book-image  {
+  .book img, .movie img {
+    max-width: 500px;
     width: 100%;
-    max-width: 400px;
-    height: auto;
-    margin-top: 1.5rem;
-    border-radius: 8px;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
   }
-
-  .movie-image  {
-    width: 50%;
-    max-width: 100px;
-    height: auto;
-    margin-top: 1.5rem;
-    border-radius: 8px;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-  }
-
  .container {
     display:flex;
     justify-content: center;
     margin-top: 20px;
     gap: 40px;
+ }
+ @media (max-width: 635px) {
+  .container {
+    flex-direction: column;
+  }
+  .book img, .movie img {
+    width: 80%;
+  }
  }
