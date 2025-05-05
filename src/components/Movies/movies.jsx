@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import './movies.css';
+import { motion, AnimatePresence } from "framer-motion";
 
 const API_URL = 'https://pageandpicture.duckdns.org/api/';
 
@@ -167,8 +168,16 @@ const Movies = () => {
           <p>No movies found</p>
         ) : (
           <div className="row row-cols-1 row-cols-sm-2 row-cols-md-3 g-4 row-cols-lg-4 row-cols-xl-5">
+            <AnimatePresence>
             {movies.map((movie) => (
-              <div key={movie.id} className="col">
+              <motion.div 
+              key={movie.id} 
+              className="col"
+              initial={{opacity: 0, y: 100, x: 50}}
+              animate={{opacity: 1, y: 0, x: 0}}
+              exit={{opacity: 0, y: -50}}
+              transition={{duration: .5}}
+              >
                 <div className="card h-100">
                   {movie.poster ? (
                     <img
@@ -206,14 +215,23 @@ const Movies = () => {
                     </div>
                   </div>
                 </div>
-              </div>
+              </motion.div>
             ))}
+            </AnimatePresence>
           </div>
         )}
       </div>
 
       {showModal && (
-        <div className="modal show d-block" tabIndex="-1" role="dialog">
+        <motion.div 
+        className="modal show d-block" 
+        tabIndex="-1" 
+        role="dialog"
+        initial={{opacity: 0, y: 100}}
+        animate={{opacity: 1, y: 0}}
+        exit={{opacity: 0, y: -50}}
+        transition={{duration: .5}}
+        >
           <div className="modal-dialog" role="document">
             <div className="modal-content">
               <div className="modal-header">
@@ -306,7 +324,7 @@ const Movies = () => {
               </div>
             </div>
           </div>
-        </div>
+        </motion.div>
       )}
     </>
   );
