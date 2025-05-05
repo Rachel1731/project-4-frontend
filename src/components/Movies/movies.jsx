@@ -103,7 +103,7 @@ const Movies = () => {
           body: JSON.stringify(updatedMovie),
         });
       } else {
-        response = await fetch(`http://3.83.236.184:8000/api/movies/${editingMovieId}`, {
+        response = await fetch(`http://3.83.236.184:8000/api/movies/${editingMovieId}/`, {
           method: 'PUT',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify(updatedMovie),
@@ -134,7 +134,7 @@ const Movies = () => {
 
   const handleDelete = async () => {
     try {
-      const response = await fetch(`http://3.83.236.184:8000/api/movies/${editingMovieId}`, {
+      const response = await fetch(`http://3.83.236.184:8000/api/movies/${editingMovieId}/`, {
         method: 'DELETE',
       });
       if (response.ok) {
