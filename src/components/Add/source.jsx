@@ -2,7 +2,7 @@ import "./source.css";
 
 const Add = () => {
   return (
-    <div className="appContainer">
+    <div className="appContainer bg-dark text-light my-4 p-4">
       <h1>Books and Movies Source Page</h1>
 
       <section>
@@ -20,21 +20,16 @@ const Add = () => {
         <li>
           <strong>Postgres 16.8</strong>
         </li>
-      </div>
-
-      <div className="Fiction">
         <h3>Frontend technology</h3>
-        <ul>
-          <li>
-            <strong>react 19.1.0</strong>
-          </li>
-          <li>
-            <strong>react-dom@19.1.0</strong>
-          </li>
-          <li>
-            <strong>react-router-dom@7.5.3</strong>
-          </li>
-        </ul>
+        <li>
+          <strong>react 19.1.0</strong>
+        </li>
+        <li>
+          <strong>react-dom@19.1.0</strong>
+        </li>
+        <li>
+          <strong>react-router-dom@7.5.3</strong>
+        </li>
       </div>
 
       <div className="Poetry">
