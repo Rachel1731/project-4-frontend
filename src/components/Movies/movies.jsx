@@ -1,23 +1,23 @@
-import React, { useEffect, useState } from 'react';
-import 'bootstrap/dist/css/bootstrap.min.css';
-import './movies.css';
+import React, { useEffect, useState } from "react";
+import "bootstrap/dist/css/bootstrap.min.css";
+import "./movies.css";
 
 const Movies = () => {
   const [movies, setMovies] = useState([]);
-  const [formMode, setFormMode] = useState('add'); // 'add' or 'edit'
+  const [formMode, setFormMode] = useState("add"); // 'add' or 'edit'
   const [showModal, setShowModal] = useState(false);
   const [editingMovieId, setEditingMovieId] = useState(null);
   const [editForm, setEditForm] = useState({
-    title: '',
-    date: '',
-    budget: '',
-    actors: '',
+    title: "",
+    date: "",
+    budget: "",
+    actors: "",
   });
 
   useEffect(() => {
     const getMovies = async () => {
       try {
-        const response = await fetch('http://3.83.236.184:8000/api/movies/');
+        const response = await fetch("http://3.83.236.184:8000/api/movies/");
         const data = await response.json();
 
         const moviesWithPosters = await Promise.all(
@@ -29,7 +29,7 @@ const Movies = () => {
 
         setMovies(moviesWithPosters);
       } catch (err) {
-        console.log('Error fetching movies', err);
+        console.log("Error fetching movies", err);
       }
     };
 
@@ -39,23 +39,25 @@ const Movies = () => {
   const fetchPoster = async (title) => {
     try {
       const response = await fetch(
-        `https://www.omdbapi.com/?t=${encodeURIComponent(title)}&apikey=8a350606`
+        `https://www.omdbapi.com/?t=${encodeURIComponent(
+          title
+        )}&apikey=8a350606`
       );
       const data = await response.json();
-      return data.Poster !== 'N/A' ? data.Poster : null;
+      return data.Poster !== "N/A" ? data.Poster : null;
     } catch (error) {
-      console.error('Error fetching poster:', error);
+      console.error("Error fetching poster:", error);
       return null;
     }
   };
 
-  const currencyFormatter = new Intl.NumberFormat('en-US', {
-    style: 'currency',
-    currency: 'USD',
+  const currencyFormatter = new Intl.NumberFormat("en-US", {
+    style: "currency",
+    currency: "USD",
   });
 
   const handleEdit = (movie) => {
-    setFormMode('edit');
+    setFormMode("edit");
     setEditingMovieId(movie.id);
     setEditForm({
       title: movie.title,
@@ -67,13 +69,13 @@ const Movies = () => {
   };
 
   const handleAdd = () => {
-    setFormMode('add');
+    setFormMode("add");
     setEditingMovieId(null);
     setEditForm({
-      title: '',
-      date: '',
-      budget: '',
-      actors: '',
+      title: "",
+      date: "",
+      budget: "",
+      actors: "",
     });
     setShowModal(true);
   };
@@ -96,25 +98,31 @@ const Movies = () => {
 
     try {
       let response;
-      if (formMode === 'add') {
-        response = await fetch('http://3.83.236.184:8000/api/movies/', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
+      if (formMode === "add") {
+        response = await fetch("http://3.83.236.184:8000/api/movies/", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
           body: JSON.stringify(updatedMovie),
         });
       } else {
-        response = await fetch(`http://3.83.236.184:8000/api/movies/${editingMovieId}`, {
-          method: 'PUT',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify(updatedMovie),
-        });
+        response = await fetch(
+          `http://3.83.236.184:8000/api/movies/${editingMovieId}/`,
+          {
+            method: "PUT",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(updatedMovie),
+          }
+        );
       }
 
       if (response.ok) {
         const updatedMovie = await response.json();
-        if (formMode === 'add') {
+        if (formMode === "add") {
           const poster = await fetchPoster(updatedMovie.title);
-          setMovies((prevMovies) => [...prevMovies, { ...updatedMovie, poster }]);
+          setMovies((prevMovies) => [
+            ...prevMovies,
+            { ...updatedMovie, poster },
+          ]);
         } else {
           const poster = await fetchPoster(updatedMovie.title);
           setMovies((prevMovies) =>
@@ -125,29 +133,32 @@ const Movies = () => {
         }
         setShowModal(false);
       } else {
-        console.error('Failed to save the movie.');
+        console.error("Failed to save the movie.");
       }
     } catch (error) {
-      console.error('Error saving the movie:', error);
+      console.error("Error saving the movie:", error);
     }
   };
 
   const handleDelete = async () => {
     try {
-      const response = await fetch(`http://3.83.236.184:8000/api/movies/${editingMovieId}`, {
-        method: 'DELETE',
-      });
+      const response = await fetch(
+        `http://3.83.236.184:8000/api/movies/${editingMovieId}/`,
+        {
+          method: "DELETE",
+        }
+      );
       if (response.ok) {
         setMovies((prevMovies) =>
           prevMovies.filter((movie) => movie.id !== editingMovieId)
         );
         setShowModal(false);
-        alert('Movie was deleted');
+        alert("Movie was deleted");
       } else {
-        console.error('Failed to delete the movie.');
+        console.error("Failed to delete the movie.");
       }
     } catch (error) {
-      console.error('Error deleting the movie:', error);
+      console.error("Error deleting the movie:", error);
     }
   };
 
@@ -170,7 +181,11 @@ const Movies = () => {
                 <div className="card h-100">
                   {movie.poster ? (
                     <img
-                    style={{ height: '440px', color: '#666', fontSize: '14px' }}
+                      style={{
+                        height: "440px",
+                        color: "#666",
+                        fontSize: "14px",
+                      }}
                       src={movie.poster}
                       className="card-img-top"
                       alt={movie.title}
@@ -178,7 +193,7 @@ const Movies = () => {
                   ) : (
                     <div
                       className="card-img-top d-flex align-items-center justify-content-center bg-secondary text-white"
-                      style={{ height: '180px' }}
+                      style={{ height: "180px" }}
                     >
                       No Image
                     </div>
@@ -189,7 +204,8 @@ const Movies = () => {
                       <strong>Published:</strong> {movie.date}
                     </p>
                     <p className="card-text mb-1">
-                      <strong>Budget:</strong> {currencyFormatter.format(movie.budget)}
+                      <strong>Budget:</strong>{" "}
+                      {currencyFormatter.format(movie.budget)}
                     </p>
                     <p className="card-text mb-1">
                       <strong>Actors:</strong> {movie.actors}
@@ -216,7 +232,7 @@ const Movies = () => {
             <div className="modal-content">
               <div className="modal-header">
                 <h5 className="modal-title">
-                  {formMode === 'add' ? 'Add Movie' : 'Edit Movie'}
+                  {formMode === "add" ? "Add Movie" : "Edit Movie"}
                 </h5>
               </div>
               <div className="modal-body">
@@ -268,7 +284,7 @@ const Movies = () => {
                 </form>
               </div>
               <div className="modal-footer">
-                {formMode === 'add' ? (
+                {formMode === "add" ? (
                   <button
                     type="button"
                     className="btn btn-primary"
