@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import './books.css'
+import { motion, AnimatePresence } from "framer-motion";
 
 const API_URL = 'https://pageandpicture.duckdns.org/api/';
 
@@ -186,8 +187,16 @@ const Books = () => {
         <p>No books found</p>
       ) : (
         <div className="row row-cols-1 row-cols-sm-2 row-cols-md-3 row-cols-lg-4 row-cols-xl-5 g-4">
+          <AnimatePresence>
           {books.map((book) => (
-            <div key={book.id} className="col d-flex justify-content-center">
+            <motion.div 
+            key={book.id} 
+            className="col d-flex justify-content-center"
+            initial={{opacity: 0, y: 100, x: 50}}
+            animate={{opacity: 1, y: 0, x: 0}}
+            exit={{opacity: 0, y: -50}}
+            transition={{duration: .5}}
+            >
               <div className="card h-100" style={{maxWidth: '300px'}}>
               {bookCovers[book.id] ? (
                   <img
@@ -226,13 +235,22 @@ const Books = () => {
                   </div>
                 </div>
               </div>
-            </div>
+            </motion.div>
           ))}
+          </AnimatePresence>
         </div>
       )}
 
       {editingBook && (
-        <div className="modal show d-block" tabIndex="-1" role="dialog">
+        <motion.div 
+        className="modal show d-block" 
+        tabIndex="-1" 
+        role="dialog"
+        initial={{opacity: 0, y: 100}}
+        animate={{opacity: 1, y: 0}}
+        exit={{opacity: 0, y: -50}}
+        transition={{duration: .5}}
+        >
           <div className="modal-dialog" role="document">
             <div className="modal-content">
               <div className="modal-header">
@@ -330,7 +348,7 @@ const Books = () => {
               </div>
             </div>
           </div>
-        </div>
+        </motion.div>
       )}
     </div>
     </>

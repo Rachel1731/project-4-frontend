@@ -2,142 +2,194 @@ import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import "./comments.css";
 
-const Comments = ({ movieId }) => {
-  // Local state
-  const [comments, setComments] = useState([]);
-  const [content, setContent]   = useState('');
-  const [movies, setMovies]     = useState([]);
-  const [user, setUser]         = useState('');
-  const [notify, setNotify]     = useState(false);
-  const [selectedMovieId, setSelectedMovieId] = useState(movieId || '');
+// --- Configuration ---
+const YOUR_APP_LABEL = 'books_movies_api';  // Django app name
+const API_BASE_URL = 'https://pageandpicture.duckdns.org/api/';
 
-  // Fetch list of movies for the dropdown
+function Comments() {
+  // --- State Hooks ---
+  const [books, setBooks] = useState([]);
+  const [movies, setMovies] = useState([]);
+  const [loadingObjects, setLoadingObjects] = useState(true);
+  const [objectError, setObjectError] = useState(null);
+
+  const [bookContentTypeId, setBookContentTypeId] = useState(null);
+  const [movieContentTypeId, setMovieContentTypeId] = useState(null);
+  const [loadingContentTypes, setLoadingContentTypes] = useState(true);
+  const [contentTypeError, setContentTypeError] = useState(null);
+
+  const [selectedObjectType, setSelectedObjectType] = useState('movie');
+  const [selectedObjectId, setSelectedObjectId] = useState('');
+
+  const [comments, setComments] = useState([]);
+  const [loadingComments, setLoadingComments] = useState(false);
+  const [commentsError, setCommentsError] = useState(null);
+
+  const [content, setContent] = useState('');
+  const [userName, setUserName] = useState('');
+  const [notify, setNotify] = useState(false);
+
+  const objectList = selectedObjectType === 'book' ? books : movies;
+  const objectLabel = selectedObjectType === 'book' ? 'Book' : 'Movie';
+
+  // --- Effects ---
   useEffect(() => {
-    axios
-      .get('http://3.83.236.184:8000/api/movies/')
-      .then(res => {
-        console.log('Fetched movies:', res.data);
-        setMovies(res.data);
-      })
-      .catch(err => console.error('Error fetching movies:', err));
+    setLoadingObjects(true);
+    setObjectError(null);
+    axios.all([
+      axios.get(`${API_BASE_URL}books/`),
+      axios.get(`${API_BASE_URL}movies/`)
+    ])
+    .then(axios.spread((bRes, mRes) => {
+      setBooks(bRes.data);
+      setMovies(mRes.data);
+    }))
+    .catch(err => setObjectError('Failed to load books and movies.'))
+    .finally(() => setLoadingObjects(false));
   }, []);
 
-  // Handle comment submission
-  const handleSubmit = (e) => {
-    e.preventDefault();
-
-    axios
-      .post('http://127.0.0.1:8000/api/comments/', {
-        movie: movieId,
-        content: content,   
-        user: user,
-        notify     
-      })
+  useEffect(() => {
+    setLoadingContentTypes(true);
+    setContentTypeError(null);
+    axios.get(`${API_BASE_URL}contenttypes/`)
       .then(res => {
-        console.log('Comment added:', res.data);
-        setComments(prev => [...prev, res.data]);
-        setContent('');
-        setUser('');
-        setNotify(false);
+        const bookCt = res.data.find(ct => ct.app_label === YOUR_APP_LABEL && ct.model === 'book');
+        const movieCt = res.data.find(ct => ct.app_label === YOUR_APP_LABEL && ct.model === 'movie');
+        if (bookCt) setBookContentTypeId(bookCt.id);
+        if (movieCt) setMovieContentTypeId(movieCt.id);
+        if (!bookCt || !movieCt) setContentTypeError('Missing content types for Book or Movie');
       })
-      .catch(err => console.error('Error adding comment:', err));
+      .catch(err => setContentTypeError('Failed to load content types'))
+      .finally(() => setLoadingContentTypes(false));
+  }, []);
+
+  useEffect(() => {
+    const ctId = selectedObjectType === 'book' ? bookContentTypeId : movieContentTypeId;
+    if (selectedObjectId && ctId != null) {
+      setLoadingComments(true);
+      setCommentsError(null);
+      axios.get(`${API_BASE_URL}comments/?content_type=${ctId}&object_pk=${selectedObjectId}`)
+        .then(res => setComments(res.data))
+        .catch(err => setCommentsError('Failed to load comments'))
+        .finally(() => setLoadingComments(false));
+    } else {
+      setComments([]);
+    }
+  }, [selectedObjectType, selectedObjectId, bookContentTypeId, movieContentTypeId]);
+
+  // --- Handlers ---
+  const handleTypeChange = e => {
+    setSelectedObjectType(e.target.value);
+    setSelectedObjectId('');
+    setComments([]);
   };
 
-  // Preview functionality
-  const handlePreview = () => {
-    console.log('Preview comment:', { movie: movieId, content, user, notify });
+  const handleObjectChange = e => setSelectedObjectId(e.target.value);
+
+  const handleSubmit = e => {
+    e.preventDefault();
+    const ctId = selectedObjectType === 'book' ? bookContentTypeId : movieContentTypeId;
+    if (!selectedObjectId) return alert(`Select a ${objectLabel}`);
+    if (!content.trim()) return alert('Enter your comment');
+
+    const payload = {
+      object_pk: String(selectedObjectId),
+      content_type: ctId,
+      content_type_model: selectedObjectType,
+      app_label: YOUR_APP_LABEL,
+      comment:content.trim(),
+      content: content.trim(),
+      user_name: userName.trim(),
+      notify:false,
+    };
+
+    axios.post(`${API_BASE_URL}comments/`, payload)
+      .then(res => {
+        setComments(prev => [...prev, res.data]);
+        setContent(''); setUserName(''); setNotify(false);
+      })
+      .catch(err => alert(`Failed to post comment: ${err.response?.data?.detail || err.message}`));
   };
 
-  console.log('Rendering Comments:', { movies, movieId });
+  const handlePreview = () => alert(`Preview:\n${content}\nName: ${userName || 'Anon'}`);
+
+  // --- Render ---
+  if (loadingObjects || loadingContentTypes) return <div>Loading...</div>;
+  if (objectError) return <div className="text-danger">{objectError}</div>;
+  if (contentTypeError) return <div className="text-danger">{contentTypeError}</div>;
 
   return (
-    <div className="card bg-dark text-light my-4 p-4">
-      {/* Movie selector */}
-      <label>Related Movie:</label>
-      <select
-        name={selectedMovieId}
-        value={movieId || ''}
-        onChange={e => setSelectedMovieId(e.target.value)}
-        className="form-control mb-3"
-      >
-        <option value="">None</option>
-        {movies.map(m => (
-          <option key={m.id} value={m.id}>{m.title}</option>
-        ))}
-      </select>
+    <div className="card bg-dark text-light p-4 my-4">
+      <h2>Comments</h2>
 
-      {/* Navigation & comment count */}
-      <div className="d-flex justify-content-between align-items-center mb-3">
-        <a href="#" className="text-secondary">Back to the post list</a>
-        <span>{comments.length} comments have been posted.</span>
+      <div className="mb-3">
+        <select value={selectedObjectType} onChange={handleTypeChange}>
+          <option value="movie">Movie</option>
+          <option value="book">Book</option>
+        </select>
+        <select value={selectedObjectId} onChange={handleObjectChange} disabled={!objectList.length}>
+          <option value="">-- Select {objectLabel} --</option>
+          {objectList.map(o => <option key={o.id} value={o.id}>{o.title}</option>)}
+        </select>
       </div>
 
-      {/* Comment form */}
-      <h3 className="mb-3">Post your comment</h3>
-      <form onSubmit={handleSubmit}>
-        <div className="form-group mb-3">
+      {selectedObjectId ? (
+        <form onSubmit={handleSubmit}>
           <textarea
-            id="commentContent"
-            rows="4"
-            className="form-control bg-secondary border-0 text-light"
+            rows={4}
             placeholder="Your comment"
             value={content}
             onChange={e => setContent(e.target.value)}
+            className="form-control mb-2"
             required
           />
-        </div>
-
-        <div className="form-group mb-3">
           <input
             type="text"
-            id="commentName"
-            className="form-control bg-secondary border-0 text-light"
-            placeholder="Your name"
-            value={user}
-            onChange={e => setUser(e.target.value)}
+            placeholder="Your name (optional)"
+            value={userName}
+            onChange={e => setUserName(e.target.value)}
+            className="form-control mb-2"
           />
-        </div>
-
-        <div className="form-check mb-3">
-          <input
-            type="checkbox"
-            id="notifyCheckbox"
-            className="form-check-input"
-            checked={notify}
-            onChange={e => setNotify(e.target.checked)}
-          />
-          <label className="form-check-label" htmlFor="notifyCheckbox">
-            Notify me about follow-up comments
-          </label>
-        </div>
-
-        <div className="d-flex mb-3">
-          <button type="submit" className="btn btn-primary me-2">Send</button>
-          <button type="button" className="btn btn-secondary" onClick={handlePreview}>Preview</button>
-        </div>
-      </form>
-
-      <hr className="my-4 border-secondary" />
-
-      {/* Display existing comments */}
-      <h4 className="mb-3">Comments ({comments.length})</h4>
-      {comments.length === 0 ? (
-        <p>No comments yet.</p>
+          <div className="form-check mb-2">
+            <input
+              type="checkbox"
+              id="notifyCheckbox"
+              className="form-check-input"
+              checked={notify}
+              onChange={e => setNotify(e.target.checked)}
+            />
+            <label htmlFor="notifyCheckbox" className="form-check-label">
+              Notify me about follow-up comments
+            </label>
+          </div>
+          <button type="submit" className="btn btn-primary me-2" disabled={!content.trim()}>
+            Send
+          </button>
+          <button type="button" className="btn btn-secondary" onClick={handlePreview}>
+            Preview
+          </button>
+        </form>
       ) : (
-        <div className="comments-list">
+        <p>Select a {objectLabel} above to post a comment.</p>
+      )}
+
+      {selectedObjectId && (
+        <div>
+          <h4 className="mt-4">Comments ({comments.length})</h4>
+          {loadingComments && <p>Loading comments...</p>}
+          {commentsError && <p className="text-danger">{commentsError}</p>}
           {comments.map(c => (
-            <div key={c.id} className="card bg-secondary text-light mb-3 p-3">
-              <p className="card-text mb-1">{c.content}</p>
-              <p className="card-text mb-1"><small><strong>By:</strong> {c.user_name || 'Anonymous'}</small></p>
-              <p className="card-text"><small className="text-muted">
-                Posted on: {new Date(c.created_at).toLocaleString()}
-              </small></p>
+            <div key={c.id} className="card bg-secondary text-light p-2 mb-2">
+              <p>{c.content}</p>
+              <small>By {c.user_name || 'Anonymous'}</small>
+              <br />
+              <small className="text-muted">{new Date(c.created_at).toLocaleString()}</small>
             </div>
           ))}
         </div>
       )}
     </div>
   );
-};
+}
 
 export default Comments;
