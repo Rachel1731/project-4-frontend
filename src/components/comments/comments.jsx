@@ -1,210 +1,195 @@
 import React, { useState, useEffect } from 'react';
+import axios from 'axios';
 import "./comments.css";
 
-const Comments = ({ movieId }) => {
+// --- Configuration ---
+const YOUR_APP_LABEL = 'books_movies_api';  // Django app name
+const API_BASE_URL = 'https://pageandpicture.duckdns.org/api/';
+
+function Comments() {
+  // --- State Hooks ---
+  const [books, setBooks] = useState([]);
+  const [movies, setMovies] = useState([]);
+  const [loadingObjects, setLoadingObjects] = useState(true);
+  const [objectError, setObjectError] = useState(null);
+
+  const [bookContentTypeId, setBookContentTypeId] = useState(null);
+  const [movieContentTypeId, setMovieContentTypeId] = useState(null);
+  const [loadingContentTypes, setLoadingContentTypes] = useState(true);
+  const [contentTypeError, setContentTypeError] = useState(null);
+
+  const [selectedObjectType, setSelectedObjectType] = useState('movie');
+  const [selectedObjectId, setSelectedObjectId] = useState('');
+
   const [comments, setComments] = useState([]);
+  const [loadingComments, setLoadingComments] = useState(false);
+  const [commentsError, setCommentsError] = useState(null);
+
   const [content, setContent] = useState('');
-  const [name, setName] = useState(''); // State for name field
-  const [email, setEmail] = useState(''); // State for email field
-  const [link, setLink] = useState(''); // State for link field
-  const [notify, setNotify] = useState(false); // State for notify checkbox
+  const [userName, setUserName] = useState('');
+  const [notify, setNotify] = useState(false);
 
-  
-  // useEffect(() => {
-  //   axios.get(`/api/comments/?movie=${movieId}`)
-  //     .then(response => setComments(response.data))
-  //     .catch(error => console.error(error));
-  // }, [movieId]);
+  const objectList = selectedObjectType === 'book' ? books : movies;
+  const objectLabel = selectedObjectType === 'book' ? 'Book' : 'Movie';
 
-  // const handleSubmit = (e) => {
-  //   e.preventDefault();
-  //   axios.post('/api/comments/', { movie: movieId, content })
-  //     .then(response => {
-  //       setComments([...comments, response.data]);
-  //       setContent('');
-  //     })
-  //     .catch(error => console.error(error));
-  // };
+  // --- Effects ---
+  useEffect(() => {
+    setLoadingObjects(true);
+    setObjectError(null);
+    axios.all([
+      axios.get(`${API_BASE_URL}books/`),
+      axios.get(`${API_BASE_URL}movies/`)
+    ])
+    .then(axios.spread((bRes, mRes) => {
+      setBooks(bRes.data);
+      setMovies(mRes.data);
+    }))
+    .catch(err => setObjectError('Failed to load books and movies.'))
+    .finally(() => setLoadingObjects(false));
+  }, []);
 
-  const handleSubmit = async (e) => {
+  useEffect(() => {
+    setLoadingContentTypes(true);
+    setContentTypeError(null);
+    axios.get(`${API_BASE_URL}contenttypes/`)
+      .then(res => {
+        const bookCt = res.data.find(ct => ct.app_label === YOUR_APP_LABEL && ct.model === 'book');
+        const movieCt = res.data.find(ct => ct.app_label === YOUR_APP_LABEL && ct.model === 'movie');
+        if (bookCt) setBookContentTypeId(bookCt.id);
+        if (movieCt) setMovieContentTypeId(movieCt.id);
+        if (!bookCt || !movieCt) setContentTypeError('Missing content types for Book or Movie');
+      })
+      .catch(err => setContentTypeError('Failed to load content types'))
+      .finally(() => setLoadingContentTypes(false));
+  }, []);
+
+  useEffect(() => {
+    const ctId = selectedObjectType === 'book' ? bookContentTypeId : movieContentTypeId;
+    if (selectedObjectId && ctId != null) {
+      setLoadingComments(true);
+      setCommentsError(null);
+      axios.get(`${API_BASE_URL}comments/?content_type=${ctId}&object_pk=${selectedObjectId}`)
+        .then(res => setComments(res.data))
+        .catch(err => setCommentsError('Failed to load comments'))
+        .finally(() => setLoadingComments(false));
+    } else {
+      setComments([]);
+    }
+  }, [selectedObjectType, selectedObjectId, bookContentTypeId, movieContentTypeId]);
+
+  // --- Handlers ---
+  const handleTypeChange = e => {
+    setSelectedObjectType(e.target.value);
+    setSelectedObjectId('');
+    setComments([]);
+  };
+
+  const handleObjectChange = e => setSelectedObjectId(e.target.value);
+
+  const handleSubmit = e => {
     e.preventDefault();
-    // Keep commented out for reference, assuming you'll uncomment and adjust this later
-    // const newComment = {
-    //   movie: movieId, // Ensure movieId is passed as a prop
-    //   content: content,
-    //   name: name, // Include name
-    //   email: email, // Include email
-    //   link: link, // Include link
-    //   // You might need to add notify if your backend handles it
-    // };
+    const ctId = selectedObjectType === 'book' ? bookContentTypeId : movieContentTypeId;
+    if (!selectedObjectId) return alert(`Select a ${objectLabel}`);
+    if (!content.trim()) return alert('Enter your comment');
 
-    // try {
-    //   const response = await fetch('/api/comments/', {
-    //     method: 'POST',
-    //     headers: {
-    //       'Content-Type': 'application/json',
-    //     },
-    //     body: JSON.stringify(newComment),
-    //   });
-    //   if (response.ok) {
-    //     const addedComment = await response.json();
-    //     setComments([...comments, addedComment]);
-    //     // Clear form fields after successful submission
-    //     setContent('');
-    //     setName('');
-    //     setEmail('');
-    //     setLink('');
-    //     setNotify(false);
-    //   } else {
-    //     console.error('Failed to add comment');
-    //   }
-    // } catch (error) {
-    //   console.error('Error adding comment:', error);
-    // }
+    const payload = {
+      object_pk: String(selectedObjectId),
+      content_type: ctId,
+      content_type_model: selectedObjectType,
+      app_label: YOUR_APP_LABEL,
+      comment:content.trim(),
+      content: content.trim(),
+      user_name: userName.trim(),
+      notify:false,
+    };
 
-    // Placeholder for handling form submission data if backend is not hooked up yet
-    console.log('Comment submitted:', { content, name, email, link, notify });
-    // Clear form fields (optional, depends on desired behavior after placeholder submit)
-    // setContent('');
-    // setName('');
-    // setEmail('');
-    // setLink('');
-    // setNotify(false);
+    axios.post(`${API_BASE_URL}comments/`, payload)
+      .then(res => {
+        setComments(prev => [...prev, res.data]);
+        setContent(''); setUserName(''); setNotify(false);
+      })
+      .catch(err => alert(`Failed to post comment: ${err.response?.data?.detail || err.message}`));
   };
 
+  const handlePreview = () => alert(`Preview:\n${content}\nName: ${userName || 'Anon'}`);
 
-  // const handleSubmit = (e) => {
-  //   e.preventDefault();
-  // };
-
-  const handlePreview = () => {
-    // Placeholder for preview functionality
-    console.log('Preview clicked');
-    console.log('Comment data to preview:', { content, name, email, link });
-    // You would typically render a preview of the comment here
-  };
+  // --- Render ---
+  if (loadingObjects || loadingContentTypes) return <div>Loading...</div>;
+  if (objectError) return <div className="text-danger">{objectError}</div>;
+  if (contentTypeError) return <div className="text-danger">{contentTypeError}</div>;
 
   return (
-    // Use Bootstrap card and background/text utilities for the main container
-    <div className="card bg-dark text-light my-4 p-4">
-      {/* Back to post list link and comment count */}
-      <div className="d-flex justify-content-between align-items-center mb-3">
-        {/* Link needs to be updated with your actual routing */}
-        <a href="#" className="text-secondary">Back to the post list</a>
-        {/* Placeholder for comment count */}
-        <span>{comments.length} comments have been posted.</span>
+    <div className="card bg-dark text-light p-4 my-4">
+      <h2>Comments</h2>
+
+      <div className="mb-3">
+        <select value={selectedObjectType} onChange={handleTypeChange}>
+          <option value="movie">Movie</option>
+          <option value="book">Book</option>
+        </select>
+        <select value={selectedObjectId} onChange={handleObjectChange} disabled={!objectList.length}>
+          <option value="">-- Select {objectLabel} --</option>
+          {objectList.map(o => <option key={o.id} value={o.id}>{o.title}</option>)}
+        </select>
       </div>
 
-      <h3 className="mb-3">Post your comment</h3>
-
-      {/* Form for adding a new comment */}
-      <form onSubmit={handleSubmit}>
-        {/* Your comment textarea */}
-        <div className="form-group mb-3">
-          <label htmlFor="commentContent" className="form-label visually-hidden">Your comment</label>
+      {selectedObjectId ? (
+        <form onSubmit={handleSubmit}>
           <textarea
-            className="form-control bg-secondary border-0 text-light" // Styled textarea
-            id="commentContent"
-            rows="4"
-            placeholder="Your comment" // Use placeholder instead of label for visual style
+            rows={4}
+            placeholder="Your comment"
             value={content}
             onChange={e => setContent(e.target.value)}
+            className="form-control mb-2"
             required
           />
-        </div>
-
-        {/* Name input */}
-        <div className="form-group mb-3">
-          <label htmlFor="commentName" className="form-label">Name</label>
           <input
             type="text"
-            className="form-control bg-secondary border-0 text-light" // Styled input
-            id="commentName"
-            value={name}
-            onChange={e => setName(e.target.value)}
-            // Add 'required' if name is mandatory
+            placeholder="Your name (optional)"
+            value={userName}
+            onChange={e => setUserName(e.target.value)}
+            className="form-control mb-2"
           />
-        </div>
-
-        {/* Mail input */}
-        <div className="form-group mb-2"> {/* mb-2 for spacing before help text */}
-          <label htmlFor="commentMail" className="form-label">Mail</label>
-          <input
-            type="email" // Use type="email" for better validation
-            className="form-control bg-secondary border-0 text-light" // Styled input
-            id="commentMail"
-            value={email}
-            onChange={e => setEmail(e.target.value)}
-            // Add 'required' if mail is mandatory
-          />
-          <small id="mailHelp" className="form-text text-muted">
-            Required for comment verification
-          </small>
-        </div>
-
-        {/* Link input */}
-        <div className="form-group mb-3">
-          <label htmlFor="commentLink" className="form-label">Link</label>
-          <input
-            type="url" // Use type="url" for better validation
-            className="form-control bg-secondary border-0 text-light" // Styled input
-            id="commentLink"
-            placeholder="url your name links to" // Use placeholder
-            value={link}
-            onChange={e => setLink(e.target.value)}
-          />
-           <small id="linkHelp" className="form-text text-muted">
-            (optional)
-          </small>
-        </div>
-
-        {/* Notify checkbox */}
-        <div className="form-check mb-3">
-          <input
-            type="checkbox"
-            className="form-check-input" // Bootstrap checkbox class
-            id="notifyCheckbox"
-            checked={notify}
-            onChange={e => setNotify(e.target.checked)}
-          />
-          <label className="form-check-label" htmlFor="notifyCheckbox">
-            Notify me about follow-up comments
-          </label>
-        </div>
-
-        {/* Buttons */}
-        <div className="d-flex justify-content-start"> {/* Use flexbox for button alignment */}
-          <button type="submit" className="btn btn-primary me-2"> {/* Bootstrap primary button */}
-            send
+          <div className="form-check mb-2">
+            <input
+              type="checkbox"
+              id="notifyCheckbox"
+              className="form-check-input"
+              checked={notify}
+              onChange={e => setNotify(e.target.checked)}
+            />
+            <label htmlFor="notifyCheckbox" className="form-check-label">
+              Notify me about follow-up comments
+            </label>
+          </div>
+          <button type="submit" className="btn btn-primary me-2" disabled={!content.trim()}>
+            Send
           </button>
-          <button type="button" className="btn btn-secondary" onClick={handlePreview}> {/* Bootstrap secondary button */}
-            preview
+          <button type="button" className="btn btn-secondary" onClick={handlePreview}>
+            Preview
           </button>
-        </div>
-      </form>
-
-      <hr className="my-4 border-secondary" /> {/* Styled horizontal rule */}
-
-      {/* Display existing comments */}
-      <h4 className="mb-3">Comments ({comments.length})</h4> {/* Heading for comments list */}
-      {comments.length === 0 ? (
-        <p>No comments yet.</p>
+        </form>
       ) : (
-        <div className="comments-list"> {/* Container for comments list */}
-          {comments.map(comment => (
-            // Apply Bootstrap card or similar styling to each comment if desired
-            <div key={comment.id} className="card bg-secondary text-light mb-3 p-3">
-              {/* Assuming comment object has 'content' and 'created_at' */}
-              <p className="card-text mb-1">{comment.content}</p>
-              {/* Optional: Display name if available */}
-              {comment.name && <p className="card-text mb-1"><small><strong>By:</strong> {comment.name}</small></p>}
-              <p className="card-text"><small className="text-muted">Posted on: {new Date(comment.created_at).toLocaleString()}</small></p>
+        <p>Select a {objectLabel} above to post a comment.</p>
+      )}
+
+      {selectedObjectId && (
+        <div>
+          <h4 className="mt-4">Comments ({comments.length})</h4>
+          {loadingComments && <p>Loading comments...</p>}
+          {commentsError && <p className="text-danger">{commentsError}</p>}
+          {comments.map(c => (
+            <div key={c.id} className="card bg-secondary text-light p-2 mb-2">
+              <p>{c.content}</p>
+              <small>By {c.user_name || 'Anonymous'}</small>
+              <br />
+              <small className="text-muted">{new Date(c.created_at).toLocaleString()}</small>
             </div>
           ))}
         </div>
       )}
     </div>
   );
-};
+}
 
 export default Comments;
