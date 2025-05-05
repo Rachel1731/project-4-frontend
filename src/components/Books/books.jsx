@@ -2,6 +2,8 @@ import React, { useEffect, useState } from 'react';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import './books.css'
 
+const API_URL = 'https://pageandpicture.duckdns.org/api/';
+
 const Books = () => {
   const [books, setBooks] = useState([]);
   const [movies, setMovies] = useState([]);
@@ -19,13 +21,13 @@ const Books = () => {
   useEffect(() => {
     const getData = async () => {
       try {
-        const booksResponse = await fetch('http://3.83.236.184:8000/api/books/', {
+        const booksResponse = await fetch(`${API_URL}books/`, {
           method: 'GET',
         });
         const booksData = await booksResponse.json();
         setBooks(booksData);
 
-        //API fetches cover for each book
+        //API fetches cover for each book, adds it to an array coverPromises
         const coverPromises = booksData.map(async (book) => {
           const coverUrl = await fetchCoverByTitle(book.title);
           // console.log(`Cover for ${book.title}:`, coverUrl);
@@ -38,7 +40,7 @@ const Books = () => {
         }, {});
         setBookCovers(covers);
 
-        const moviesResponse = await fetch('http://3.83.236.184:8000/api/movies/', {
+        const moviesResponse = await fetch(`${API_URL}movies/`, {
           method: 'GET',
         });
         const moviesData = await moviesResponse.json();
@@ -98,13 +100,13 @@ const Books = () => {
     try {
       let response;
       if (formMode === 'add') {
-        response = await fetch('http://3.83.236.184:8000/api/books/', {
+        response = await fetch(`${API_URL}books/`, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify(updatedBook),
         });
       } else {
-        response = await fetch(`http://3.83.236.184:8000/api/books/${editingBook}/`, {
+        response = await fetch(`${API_URL}books/${editingBook}/`, {
           method: 'PUT',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify(updatedBook),
@@ -154,7 +156,7 @@ const Books = () => {
   };
 
   const handleDelete = async () => {
-    const response = await fetch(`http://3.83.236.184:8000/api/books/${editingBook}`, {
+    const response = await fetch(`${API_URL}books/${editingBook}/`, {
       method: 'DELETE',
     });
     if (response.ok) {

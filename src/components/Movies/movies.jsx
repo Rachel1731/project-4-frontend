@@ -2,6 +2,8 @@ import React, { useEffect, useState } from 'react';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import './movies.css';
 
+const API_URL = 'https://pageandpicture.duckdns.org/api/';
+
 const Movies = () => {
   const [movies, setMovies] = useState([]);
   const [formMode, setFormMode] = useState('add'); // 'add' or 'edit'
@@ -17,7 +19,7 @@ const Movies = () => {
   useEffect(() => {
     const getMovies = async () => {
       try {
-        const response = await fetch('http://3.83.236.184:8000/api/movies/');
+        const response = await fetch(`${API_URL}movies/`);
         const data = await response.json();
 
         const moviesWithPosters = await Promise.all(
@@ -97,13 +99,13 @@ const Movies = () => {
     try {
       let response;
       if (formMode === 'add') {
-        response = await fetch('http://3.83.236.184:8000/api/movies/', {
+        response = await fetch(`${API_URL}mopvies/`, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify(updatedMovie),
         });
       } else {
-        response = await fetch(`http://3.83.236.184:8000/api/movies/${editingMovieId}/`, {
+        response = await fetch(`${API_URL}movies/${editingMovieId}/`, {
           method: 'PUT',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify(updatedMovie),
@@ -134,7 +136,7 @@ const Movies = () => {
 
   const handleDelete = async () => {
     try {
-      const response = await fetch(`http://3.83.236.184:8000/api/movies/${editingMovieId}/`, {
+      const response = await fetch(`${API_URL}movies/${editingMovieId}/`, {
         method: 'DELETE',
       });
       if (response.ok) {
