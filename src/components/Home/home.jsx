@@ -19,7 +19,7 @@ const Home = () => {
           <img  alt="Books" src="images/image.png" />
         </div >
      </div>
-          </div>
+    </div>
         
   );
 };

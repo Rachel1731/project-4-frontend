@@ -22,7 +22,37 @@
     padding: 0;
     padding-right: 20px;
   }
-  
+  .menu-icon {
+    display: none;
+    margin-right: 20px;
+    font-size: 2rem;
+  }
+  .navbar-links.active {
+    display: flex;
+    opacity: 1; /* Visible state */
+  }
+  @media (max-width: 640px) {
+    .navbar-links {
+      display: none;
+      flex-direction: column;
+      position: absolute;
+      top: 60px;
+      right: 0;
+      width: 100%;
+      background-color: #333333d2;
+      padding: 1rem 0;
+      height: 100vh;
+      width: 200px;
+      z-index: 1;
+      
+    }
+    .menu-icon {
+      display: block;
+    }
+    .navbar-links.active {
+      display: flex;
+    }
+  }
   .navbar-links li {
     margin-left: 20px;
   }
