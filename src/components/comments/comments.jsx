@@ -4,7 +4,7 @@ import "./comments.css";
 
 // --- Configuration ---
 const YOUR_APP_LABEL = 'books_movies_api';  // Django app name
-const API_BASE_URL = 'http://127.0.0.1:8000/api/';
+const API_BASE_URL = 'https://pageandpicture.duckdns.org/api/';
 
 function Comments() {
   // --- State Hooks ---
