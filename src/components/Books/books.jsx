@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import './books.css'
 
-const API_URL = 'http://54.88.117.91:8000/api/';
+const API_URL = 'http://pageandpicture.duckdns.org/api/';
 
 const Books = () => {
   const [books, setBooks] = useState([]);
