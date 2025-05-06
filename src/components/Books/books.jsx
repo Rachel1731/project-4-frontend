@@ -28,13 +28,13 @@ const Books = () => {
         const booksData = await booksResponse.json();
         setBooks(booksData);
 
-        //API fetches cover for each book, adds it to an array coverPromises
-        const coverPromises = booksData.map(async (book) => {
+        //API fetches cover for each book, adds it to an array cover Images
+        const coverImages = booksData.map(async (book) => {
           const coverUrl = await fetchCoverByTitle(book.title);
           // console.log(`Cover for ${book.title}:`, coverUrl);
           return { id: book.id, coverUrl };
         });
-        const coversArray = await Promise.all(coverPromises);
+        const coversArray = await Promise.all(coverImages);
         const covers = coversArray.reduce((acc, { id, coverUrl }) => {
           acc[id] = coverUrl;
           return acc;
