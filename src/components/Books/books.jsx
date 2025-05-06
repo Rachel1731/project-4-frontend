@@ -97,7 +97,7 @@ const Books = () => {
       category: editForm.category,
       movie_id: editForm.movie ? parseInt(editForm.movie) : null,
     };
-    console.log('Sending to API:', updatedBook); // seeing what i am sending to the API
+    console.log('Sending to API:', updatedBook); // seeing what i am sending to the API, not registering updated Movie
     try {
       let response;
       if (formMode === 'add') {
