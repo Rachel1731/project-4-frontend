@@ -14,7 +14,11 @@ const Home = () => {
       exit={{opacity: 0, y: -50}}
       transition={{duration: .5}}
       >
-      <h1>Welcome to Page and Picture</h1>
+      <motion.h1
+      initial={{ opacity: 0, y: -20 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ delay: 0.2, type: "spring", stiffness: 120, damping: 15 }}
+      >Welcome to Page and Picture</motion.h1>
       <p className="home-paragraph">
         Where all your favorite books and movies lived!
       </p> 
